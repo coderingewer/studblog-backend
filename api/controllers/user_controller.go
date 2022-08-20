@@ -12,6 +12,7 @@ import (
 	"studapp-blog/api/utils"
 
 	"github.com/gorilla/mux"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -146,19 +147,12 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	users, err := user.FindAllUsers()
-	usersR := []models.UserResponse{}
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err)
+		formattedError := utils.FormatError(err.Error())
+		utils.ERROR(w, http.StatusInternalServerError, formattedError)
 		return
 	}
-	if len(users) > 0 {
-		for i, _ := range users {
-			usrRes := models.UserResponse{}
-			usrR := usrRes.UserToResponse(users[i])
-			usersR = append(usersR, usrR)
-		}
-	}
-	utils.JSON(w, http.StatusOK, usersR)
+	utils.JSON(w, http.StatusOK, users)
 }
 
 func ConfirmAcoount(w http.ResponseWriter, r *http.Request) {
@@ -267,6 +261,102 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	usrRes := models.UserResponse{}
 	usrR := usrRes.UserToResponse(*updatedUser)
 	utils.JSON(w, http.StatusOK, usrR)
+}
+
+func UpdatePassword(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	uid, err := strconv.ParseUint(vars["id"], 10, 64)
+	user := models.User{}
+	tokenID, err := auth.ExtractTokenID(r)
+	if err != nil {
+		utils.ERROR(w, http.StatusUnauthorized, errors.New("Yetkilendirilmemiş"))
+		fmt.Println("hao2")
+	}
+	usr, err := user.FindByID(uint(uid))
+	if tokenID != uint(uid) {
+		utils.ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
+		fmt.Println("hao1")
+	}
+	if err != nil {
+		utils.ERROR(w, http.StatusBadRequest, err)
+		return
+	}
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		utils.ERROR(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+	UpdatePassUsr := models.UpdatePassUser{}
+	err = json.Unmarshal(body, &UpdatePassUsr)
+	if err != nil {
+		utils.ERROR(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+	_ = UpdatePassUsr.BeforeSAve()
+	if err != nil {
+		utils.ERROR(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+	err = models.VerifyPassword(usr.Password, UpdatePassUsr.Password)
+	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
+		fmt.Println(user.Password)
+		utils.ERROR(w, http.StatusUnauthorized, errors.New("Şifre yanlış"))
+		return
+	}
+
+	err = user.UpdatePassword(uint(uid), UpdatePassUsr.NewPassword)
+	if err != nil {
+		formattedError := utils.FormatError(err.Error())
+		utils.ERROR(w, http.StatusInternalServerError, formattedError)
+		return
+	}
+	fmt.Println(usr.Password)
+	utils.JSON(w, http.StatusOK, "")
+}
+
+func UpdatePasswordByAdmin(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	uid, err := strconv.ParseUint(vars["id"], 10, 64)
+	user := models.User{}
+	tokenID, err := auth.ExtractTokenID(r)
+	if err != nil {
+		utils.ERROR(w, http.StatusUnauthorized, errors.New("Yetkilendirilmemiş"))
+		fmt.Println("hao2")
+	}
+	admin, err := user.FindByID(uint(tokenID))
+	if err != nil {
+		formattedError := utils.FormatError(err.Error())
+		utils.ERROR(w, http.StatusInternalServerError, formattedError)
+		return
+	}
+
+	if admin.UserRole != "SUPER-USER" {
+		utils.ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
+		fmt.Println("hao1")
+	}
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		utils.ERROR(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+	UpdatePassUsr := models.UpdatePassUser{}
+	err = json.Unmarshal(body, &UpdatePassUsr)
+	if err != nil {
+		utils.ERROR(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+	user.Prepare()
+	if err != nil {
+		utils.ERROR(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+	err = user.UpdatePassword(uint(uid), UpdatePassUsr.NewPassword)
+	if err != nil {
+		formattedError := utils.FormatError(err.Error())
+		utils.ERROR(w, http.StatusInternalServerError, formattedError)
+		return
+	}
+	utils.JSON(w, http.StatusOK, "")
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {

@@ -163,3 +163,24 @@ func (u *User) DeleteByID(uid uint) (int64, error) {
 	return db.RowsAffected, nil
 
 }
+
+func (u *User) UpdatePassword(uid uint, password string) error {
+	err := u.BeforeSAve()
+	if err != nil {
+		log.Fatal(err)
+	}
+	db := GetDB().Table("users").Where("id=?", uid).UpdateColumn(
+		map[string]interface{}{
+			"password":   password,
+			"updated_at": time.Now(),
+		},
+	)
+	if db.Error != nil {
+		return db.Error
+	}
+	err = GetDB().Table("users").Where("id=?", uid).Take(&u).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}

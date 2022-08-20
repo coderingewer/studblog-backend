@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type ResponseUser struct {
 	ID        uint   `json:"ID"`
@@ -22,6 +25,21 @@ type UserResponse struct {
 type UpdatePost struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`
+}
+
+type UpdatePassUser struct {
+	Password    string `json:"password"`
+	NewPassword string `json:"newPassword"`
+}
+
+func (u *UpdatePassUser) BeforeSAve() error {
+	hashedPassword, err := Hash(u.NewPassword)
+	if err != nil {
+		fmt.Println(string(err.Error()))
+		return err
+	}
+	u.NewPassword = string(hashedPassword)
+	return nil
 }
 
 type PostResponse struct {
