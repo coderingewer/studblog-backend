@@ -47,9 +47,9 @@ func (u *User) Prepare() {
 	u.ID = 0
 	u.CreatedAt = time.Now()
 	u.UpdatedAt = time.Now()
-	u.UserRole = "BLOGGER"
 	u.DeletedAt = nil
 	u.Isvalid = false
+	u.UserRole = "BLOGGER"
 	u.Image.ID = u.ImageID
 	u.Image.Url = "https://icdn.tgrthaber.com.tr/crop/850x500/static/haberler/2021_12/xbuyuk/nusret-hayatini-degistiren-3-donum-noktasini-acikladi-her-sabah-o-tabelaya-bakiy-1640427188.jpg"
 }
@@ -103,6 +103,14 @@ func (u *User) FindAllUsers() ([]User, error) {
 	if err != nil {
 		return []User{}, err
 	}
+	if len(users) > 0 {
+		for i, _ := range users {
+			err = GetDB().Debug().Table("images").Where("id=?", &users[i].ImageID).Take(&users[i].Image).Error
+			if err != nil {
+				return []User{}, err
+			}
+		}
+	}
 	return users, nil
 }
 
@@ -114,6 +122,10 @@ func (u *User) FindByID(uid uint) (*User, error) {
 		return &User{}, err
 	}
 	err = db.Debug().Table("posts").Where("user_id=?", uid).Find(&u.Posts).Error
+	if err != nil {
+		return &User{}, err
+	}
+	err = db.Debug().Table("images").Where("id=?", u.ImageID).Find(&u.Image).Error
 	if err != nil {
 		return &User{}, err
 	}

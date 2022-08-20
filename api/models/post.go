@@ -17,12 +17,14 @@ type Post struct {
 	Image   Image     `json:"image"`
 	Likes   []Like    `json:"likes"`
 	Views   []View    `json:"views"`
+	IsValid bool      `json:"isValid"`
 	PosTags []PostTag `gorm:"many2many:post_tags" json:"post_tags"`
 }
 
 func (p *Post) Prepare() {
 	p.ID = 0
 	p.Sender = User{}
+	p.IsValid = true
 }
 
 func (p *Post) Save() (*Post, error) {
@@ -41,29 +43,30 @@ func (p *Post) Save() (*Post, error) {
 	return p, nil
 }
 
-func (p *Post) FindAllPosts() (*[]Post, error) {
+func (p *Post) FindAllPosts() ([]Post, error) {
 	posts := []Post{}
 	err := GetDB().Debug().Table("posts").Order("created_at desc").Find(&posts).Limit(10).Error
 	if err != nil {
-		return &[]Post{}, err
+		return []Post{}, err
 	}
 	if len(posts) > 0 {
 		for i, _ := range posts {
 			err := GetDB().Debug().Table("users").Where("id=?", &posts[i].UserID).Take(&posts[i].Sender).Error
 			if err != nil {
-				return &[]Post{}, err
+				return []Post{}, err
 			}
 			err = GetDB().Debug().Table("images").Where("id=?", &posts[i].PhotoID).Take(&posts[i].Image).Error
 			if err != nil {
-				return &[]Post{}, err
+				return []Post{}, err
 			}
 			err = GetDB().Debug().Table("views").Where("post_id=?", &p.ID).Find(&p.Views).Error
 			if err != nil {
-				return &[]Post{}, err
+				return []Post{}, err
 			}
+
 		}
 	}
-	return &posts, nil
+	return posts, nil
 }
 
 func (post *Post) FindByID(pid uint) (*Post, error) {

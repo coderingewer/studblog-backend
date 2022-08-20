@@ -42,6 +42,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	usr.Token = token
 	usr.Username = user.Username
 	usr.Name = user.Name
+	usr.UserRole = user.UserRole
 	(w).Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	utils.JSON(w, http.StatusOK, usr)
 }

@@ -45,7 +45,11 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		formattedError := utils.FormatError(err.Error())
 		utils.ERROR(w, http.StatusInternalServerError, formattedError)
 		return
-	} /*
+	}
+	respPost := models.PostResponse{}
+	restPst := respPost.PostToResponse(*postCreated)
+
+	/*
 		tag := models.Tag{}
 		err = tag.CreatTag(post.ID)
 		if err != nil {
@@ -54,7 +58,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		}*/
 
 	w.Header().Set("Location", fmt.Sprintf("%s%s%d", r.Host, r.URL, post.ID))
-	utils.JSON(w, http.StatusCreated, postCreated)
+	utils.JSON(w, http.StatusCreated, restPst)
 }
 
 func GetPosts(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +68,15 @@ func GetPosts(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusInternalServerError, err)
 		return
 	}
-	utils.JSON(w, http.StatusOK, posts)
+	respPosts := []models.PostResponse{}
+	respPost := models.PostResponse{}
+	if len(posts) > 0 {
+		for i, _ := range posts {
+			restPst := respPost.PostToResponse(posts[i])
+			respPosts = append(respPosts, restPst)
+		}
+	}
+	utils.JSON(w, http.StatusOK, respPosts)
 }
 
 func GetPost(w http.ResponseWriter, r *http.Request) {
@@ -79,7 +91,9 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusInternalServerError, err)
 		return
 	}
-	utils.JSON(w, http.StatusOK, postReceived)
+	respPost := models.PostResponse{}
+	restPst := respPost.PostToResponse(*postReceived)
+	utils.JSON(w, http.StatusOK, restPst)
 }
 
 func UpdatePost(w http.ResponseWriter, r *http.Request) {
@@ -131,7 +145,10 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusInternalServerError, formattedError)
 		return
 	}
-	utils.JSON(w, http.StatusOK, postUpdated)
+	respPost := models.PostResponse{}
+	restPst := respPost.PostToResponse(*postUpdated)
+
+	utils.JSON(w, http.StatusOK, restPst)
 
 }
 
