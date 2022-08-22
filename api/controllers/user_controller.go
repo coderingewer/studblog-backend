@@ -91,7 +91,6 @@ func CreateUserByAdmin(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
-	user.Prepare()
 	err = user.Validate("register")
 	if err != nil {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
@@ -104,6 +103,7 @@ func CreateUserByAdmin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.ImageID = img.ID
+	fmt.Println("id: ", img.ID)
 
 	/*
 		token, err := auth.CreateToken(user.ID)
@@ -112,15 +112,16 @@ func CreateUserByAdmin(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-			data := utils.EmailData{}
-			data.FirstName = user.Name
-			data.URL = string(os.Getenv("DOMAIN")) + "/api/users/confirm/" + string(token)
-			data.Subject = "Hesabınızı onaylayın"
-			err = utils.SendMail(user.Email, data, "confirm")
-			if err != nil {
-				utils.ERROR(w, http.StatusUnprocessableEntity, err)
-				return
+		data := utils.EmailData{}
+		data.FirstName = user.Name
+		data.URL = string(os.Getenv("DOMAIN")) + "/api/users/confirm/" + string(token)
+		data.Subject = "Hesabınızı onaylayın"
+		err = utils.SendMail(user.Email, data, "confirm")
+		if err != nil {
+			utils.ERROR(w, http.StatusUnprocessableEntity, err)
+			return
 			}*/
+	user.Prepare()
 	userCreated, err := user.SaveUser()
 	usrRes := models.UserResponse{}
 	usrR := usrRes.UserToResponse(*userCreated)
