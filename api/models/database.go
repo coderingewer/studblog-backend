@@ -8,11 +8,11 @@ import (
 )
 
 const (
-	host     = "localhost"
+	host     = "studappblog.cd2waqtfpdkv.us-east-1.rds.amazonaws.com"
 	port     = 5432
 	user     = "postgres"
-	password = "uyumak"
-	dbname   = "guroo"
+	password = "studincapi"
+	dbname   = "studblog"
 )
 
 var db *gorm.DB
@@ -33,16 +33,8 @@ func init() {
 		Image{}, Tag{}, PostTag{}, Like{}, View{})
 
 	fmt.Println("DB Successfully connected!")
-	user := User{Name: "blogAdmin", Username: "superruser", Email: "usersuperr@super.com", UserRole: "SUPER-USER", Password: "superUser.2"}
-	user.BeforeSAve()
-	_, _ = user.SaveUser()
-	fmt.Println("Seed user sent")
 }
 
 func GetDB() *gorm.DB {
 	return db
-}
-
-func seed() {
-
 }
