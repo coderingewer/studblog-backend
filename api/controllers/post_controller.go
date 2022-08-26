@@ -202,6 +202,19 @@ func GetPostsByUserID(w http.ResponseWriter, r *http.Request) {
 	utils.JSON(w, http.StatusOK, posts)
 }
 
+func GetPostsByCategory(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	post := models.Post{}
+	category := vars["category"]
+	fmt.Println("category: " + category)
+	posts, err := post.FindByCategory(category)
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, err)
+		return
+	}
+	utils.JSON(w, http.StatusOK, posts)
+}
+
 func UpdatePostImage(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	pid, err := strconv.ParseUint(vars["postId"], 10, 64)

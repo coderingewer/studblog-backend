@@ -9,22 +9,24 @@ import (
 
 type Post struct {
 	gorm.Model
-	Title   string    `json:"title"`
-	Sender  User      `json:"sender"`
-	Content string    ` gorm:"not null" json:"content"`
-	UserID  uint      `gorm:"not null" json:"userId"`
-	PhotoID uint      `json:"photoId"`
-	Image   Image     `json:"image"`
-	Likes   []Like    `json:"likes"`
-	Views   []View    `json:"views"`
-	IsValid bool      `json:"isValid"`
-	PosTags []PostTag `gorm:"many2many:post_tags" json:"post_tags"`
+	Title    string    `json:"title"`
+	Sender   User      `json:"sender"`
+	Content  string    ` gorm:"not null" json:"content"`
+	Category string    `json:"category"`
+	UserID   uint      `gorm:"not null" json:"userId"`
+	PhotoID  uint      `json:"photoId"`
+	Image    Image     `json:"image"`
+	Likes    []Like    `json:"likes"`
+	Views    []View    `json:"views"`
+	IsValid  bool      `json:"isValid"`
+	PosTags  []PostTag `gorm:"many2many:post_tags" json:"post_tags"`
 }
 
 func (p *Post) Prepare() {
 	p.ID = 0
 	p.Sender = User{}
 	p.IsValid = true
+	p.Image.Url = "https://res.cloudinary.com/ddeatrwxs/image/upload/v1661433477/studapp/placeholder-image_ewmdou.png"
 }
 
 func (p *Post) Save() (*Post, error) {
@@ -93,6 +95,23 @@ func (post *Post) FindByID(pid uint) (*Post, error) {
 		return &Post{}, err
 	}
 	return &p, nil
+}
+
+func (post *Post) FindByCategory(category string) ([]Post, error) {
+	posts := []Post{}
+	err := GetDB().Debug().Table("posts").Where("category= ?", category).Find(&posts).Error
+	if err != nil {
+		return []Post{}, err
+	}
+	if len(posts) > 0 {
+		for i, _ := range posts {
+			err := GetDB().Debug().Table("users").Where("id=?", &posts[i].UserID).Take(&posts[i].Sender).Error
+			if err != nil {
+				return []Post{}, err
+			}
+		}
+	}
+	return posts, nil
 }
 
 func (p *Post) UpdatePost(pid uint) (*Post, error) {

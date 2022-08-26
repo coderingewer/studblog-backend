@@ -46,6 +46,7 @@ type PostResponse struct {
 	ID        uint         `json:"ID"`
 	Title     string       `json:"title"`
 	Content   string       `json:"content"`
+	Category  string       ` json:"category"`
 	Views     []View       `json:"views"`
 	Image     Image        `json:"image"`
 	CreatedAt time.Time    `json:"created_at"`
@@ -73,6 +74,7 @@ func (pstR PostResponse) PostToResponse(post Post) PostResponse {
 	pstR.CreatedAt = post.CreatedAt
 	pstR.UpdatedAt = post.UpdatedAt
 	pstR.Image = post.Image
+	pstR.Category = post.Category
 	usrR := UserResponse{}
 	postUsr := usrR.UserToResponse(post.Sender)
 	pstR.Sender = postUsr

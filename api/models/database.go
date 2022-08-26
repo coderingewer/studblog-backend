@@ -8,11 +8,11 @@ import (
 )
 
 const (
-	host     = "studappblog.cd2waqtfpdkv.us-east-1.rds.amazonaws.com"
+	host     = "localhost"
 	port     = 5432
 	user     = "postgres"
-	password = "studincapi"
-	dbname   = "studblog"
+	password = "uyumak"
+	dbname   = "hamo"
 )
 
 var db *gorm.DB
@@ -27,14 +27,11 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-
 	db = conn
 	db.Debug().AutoMigrate(User{}, Post{},
 		Image{}, Tag{}, PostTag{}, Like{}, View{})
-
 	fmt.Println("DB Successfully connected!")
 }
-
 func GetDB() *gorm.DB {
 	return db
 }

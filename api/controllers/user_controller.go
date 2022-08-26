@@ -121,6 +121,7 @@ func CreateUserByAdmin(w http.ResponseWriter, r *http.Request) {
 			utils.ERROR(w, http.StatusUnprocessableEntity, err)
 			return
 			}*/
+	user.BeforeSAve()
 	user.Prepare()
 	userCreated, err := user.SaveUser()
 	usrRes := models.UserResponse{}
