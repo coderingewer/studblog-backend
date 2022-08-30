@@ -49,8 +49,8 @@ type PostResponse struct {
 	Category  string       ` json:"category"`
 	Views     []View       `json:"views"`
 	Image     Image        `json:"image"`
-	CreatedAt time.Time    `json:"created_at"`
-	UpdatedAt time.Time    `json:"updated_at"`
+	CreatedAt string       `json:"created_at"`
+	UpdatedAt string       `json:"updated_at"`
 	IsValid   bool         `json:"isValid"`
 	Sender    UserResponse `json:"sender"`
 }
@@ -65,14 +65,18 @@ func (usrR UserResponse) UserToResponse(usr User) UserResponse {
 	return usrR
 }
 
+func CustomDate(Date time.Time) string {
+	return fmt.Sprintf("%v/%v/%v", Date.Day(), Date.Local().Month(), Date.Year())
+}
+
 func (pstR PostResponse) PostToResponse(post Post) PostResponse {
 	pstR.ID = post.ID
 	pstR.Title = post.Title
 	pstR.Content = post.Content
 	pstR.Views = post.Views
 	pstR.IsValid = post.IsValid
-	pstR.CreatedAt = post.CreatedAt
-	pstR.UpdatedAt = post.UpdatedAt
+	pstR.CreatedAt = CustomDate(post.CreatedAt)
+	pstR.UpdatedAt = CustomDate(post.UpdatedAt)
 	pstR.Image = post.Image
 	pstR.Category = post.Category
 	usrR := UserResponse{}
