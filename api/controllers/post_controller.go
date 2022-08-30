@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 	"studapp-blog/api/auth"
 	"studapp-blog/api/models"
 	"studapp-blog/api/utils"
@@ -206,8 +207,7 @@ func GetPostsByCategory(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	post := models.Post{}
 	category := vars["category"]
-	fmt.Println("category: " + category)
-	posts, err := post.FindByCategory(category)
+	posts, err := post.FindByCategory(strings.ToLower(category))
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err)
 		return

@@ -27,5 +27,4 @@ func ERROR(w http.ResponseWriter, statuscode int, err error) {
 	}
 	w.Header().Add("Content-Type", "application/json")
 	JSON(w, http.StatusBadRequest, nil)
-
 }

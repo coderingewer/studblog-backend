@@ -69,7 +69,7 @@ func (u *User) Validate(action string) error {
 		return nil
 
 	default:
-		if u.Username == "register" {
+		if u.Username == "" {
 			return errors.New("Kullanıcı Adı Zorulu")
 		}
 		if u.Password == "" {

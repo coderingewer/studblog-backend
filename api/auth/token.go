@@ -19,7 +19,6 @@ func CreateToken(id uint) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(os.Getenv("API_SECRET")))
 }
-
 func TokenValid(r *http.Request) error {
 	tokenString := ExtractToken(r)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -51,7 +50,6 @@ func ExtractToken(r *http.Request) string {
 }
 
 func ExtractTokenID(r *http.Request) (uint, error) {
-
 	tokenString := ExtractToken(r)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -72,14 +70,12 @@ func ExtractTokenID(r *http.Request) (uint, error) {
 	}
 	return 0, nil
 }
-
 func Pretty(data interface{}) {
 	b, err := json.MarshalIndent(data, "", " ")
 	if err != nil {
 		log.Println(err)
 		return
 	}
-
 	fmt.Println(string(b))
 }
 
