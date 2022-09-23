@@ -19,7 +19,7 @@ var db *gorm.DB
 
 func init() {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
+		"password=%s dbname=%s sslmode=require",
 		host, port, user, password, dbname)
 
 	fmt.Println(psqlInfo)
