@@ -17,7 +17,7 @@ func Hello(w http.ResponseWriter, r *http.Request) {
 }
 func main() {
 	router := mux.NewRouter()
-	router.HandleFunc("/api/users/new", middlewares.SetMiddlewareJSON(Hello)).Methods("GET")
+	router.HandleFunc("/", middlewares.SetMiddlewareJSON(Hello)).Methods("GET")
 
 	//Users
 	router.HandleFunc("/api/users/new", middlewares.SetMiddlewareJSON(controllers.CreateUserByAdmin)).Methods("POST")
