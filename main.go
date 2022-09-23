@@ -5,14 +5,19 @@ import (
 	"net/http"
 	"os"
 	"studapp-blog/api/controllers"
+	"studapp-blog/api/utils"
 	"studapp-blog/middlewares"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
+func Hello(w http.ResponseWriter, r *http.Request) {
+	utils.JSON(w, http.StatusOK, "Welcome to Studblog API")
+}
 func main() {
 	router := mux.NewRouter()
+	router.HandleFunc("/", middlewares.SetMiddlewareJSON(Hello)).Methods("POST")
 
 	//Users
 	router.HandleFunc("/api/users/new", middlewares.SetMiddlewareJSON(controllers.CreateUserByAdmin)).Methods("POST")
