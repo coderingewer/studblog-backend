@@ -30,7 +30,7 @@ func main() {
 	router.HandleFunc("/api/users/update/{id}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(controllers.UpdateUser))).Methods("POST")
 	router.HandleFunc("/api/users/updatePassword/{id}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(controllers.UpdatePassword))).Methods("POST")
 	router.HandleFunc("/api/users/updatePasswordByAdmin/{id}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(controllers.UpdatePasswordByAdmin))).Methods("POST")
-	router.HandleFunc("/login", middlewares.SetMiddlewareJSON(controllers.Login)).Methods("POST")
+	router.HandleFunc("/api/users/login", middlewares.SetMiddlewareJSON(controllers.Login)).Methods("POST")
 	router.HandleFunc("/api/users/updateuserimage", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(controllers.UpdateUsermage))).Methods("POST")
 
 	//Posts
