@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -32,8 +33,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	token, user, err := SignIn(user.Email, user.Password)
 	if err != nil {
-		formattedError := utils.FormatError(err.Error())
-		utils.ERROR(w, http.StatusUnprocessableEntity, formattedError)
+		utils.ERROR(w, http.StatusUnprocessableEntity, err)
 		fmt.Println(string(err.Error()))
 		return
 	}
@@ -57,7 +57,7 @@ func SignIn(email, password string) (string, models.User, error) {
 	}
 	err = models.VerifyPassword(user.Password, password)
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
-		return "", user, err
+		return "", models.User{}, errors.New("Şifre Yanlış")
 	}
 	err = models.GetDB().Debug().Table("images").Where("id=?", user.ImageID).Take(&user.Image).Error
 	token, err := auth.CreateToken(user.ID)
