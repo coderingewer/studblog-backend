@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"os"
 	"studapp-blog/api/controllers"
@@ -55,7 +55,6 @@ func main() {
 		port = "8000"
 	}
 	handler := cors.AllowAll().Handler(router)
-
-	log.Fatal(http.ListenAndServe(":"+port, handler))
+	fmt.Println(http.ListenAndServe(":"+port, handler))
 
 }
