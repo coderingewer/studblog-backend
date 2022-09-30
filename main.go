@@ -20,7 +20,7 @@ func main() {
 	router.HandleFunc("/", middlewares.SetMiddlewareJSON(Hello)).Methods("GET")
 
 	//Users
-	router.HandleFunc("/api/users/new", middlewares.SetMiddlewareJSON(controllers.CreateUserByAdmin)).Methods("OPTIONS")
+	router.HandleFunc("/api/users/new", middlewares.SetMiddlewareJSON(controllers.CreateUserByAdmin)).Methods("POST")
 	router.HandleFunc("/api/users/confirm/{token}", middlewares.SetMiddlewareJSON(controllers.ConfirmAcoount)).Methods("POST")
 	router.HandleFunc("/api/users/getAll", middlewares.SetMiddlewareJSON(controllers.GetUsers)).Methods("GET")
 	router.HandleFunc("/api/users/getById/{id}", middlewares.SetMiddlewareJSON(controllers.GetUser)).Methods("GET")
@@ -54,6 +54,6 @@ func main() {
 	if port == "" {
 		port = "8000"
 	}
-	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "*"}), handlers.AllowedMethods([]string{"POST", "PUT", "GET", "DELETE", "PATCH", "HEAD", "OPTIONS", "*"}), handlers.AllowedOrigins([]string{"*", "https://studblog.netlify.app"}))(router)))
+	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(handlers.AllowedOrigins([]string{"*", "https://studblog.netlify.app"}), handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"POST", "PUT", "GET", "DELETE", "PATCH", "HEAD", "OPTIONS"}))(router)))
 
 }
