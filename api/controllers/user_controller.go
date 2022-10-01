@@ -137,17 +137,7 @@ func CreateUserByAdmin(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	tokenID, err := auth.ExtractTokenID(r)
-	if err != nil {
-		utils.ERROR(w, http.StatusUnauthorized, errors.New("Yetkilendirilmemiş"))
-		return
-	}
 	user := models.User{}
-	usr, err := user.FindByID(uint(tokenID))
-	if usr.UserRole != "SUPER-USER" {
-		utils.ERROR(w, http.StatusUnauthorized, errors.New("Yetkilendirilmemiş"))
-		return
-	}
 	users, err := user.FindAllUsers()
 	if err != nil {
 		formattedError := utils.FormatError(err.Error())
