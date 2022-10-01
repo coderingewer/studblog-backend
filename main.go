@@ -8,8 +8,8 @@ import (
 	"studapp-blog/api/utils"
 	"studapp-blog/middlewares"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 )
 
 func Hello(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +20,7 @@ func main() {
 	router.HandleFunc("/", middlewares.SetMiddlewareJSON(Hello)).Methods("GET")
 
 	//Users
-	router.HandleFunc("/api/users/new", middlewares.SetMiddlewareJSON(controllers.CreateUser)).Methods("POST")
+	router.HandleFunc("/api/users/new", middlewares.SetMiddlewareJSON(controllers.CreateUserByAdmin)).Methods("POST")
 	router.HandleFunc("/api/users/confirm/{token}", middlewares.SetMiddlewareJSON(controllers.ConfirmAcoount)).Methods("POST")
 	router.HandleFunc("/api/users/getAll", middlewares.SetMiddlewareJSON(controllers.GetUsers)).Methods("GET")
 	router.HandleFunc("/api/users/getById/{id}", middlewares.SetMiddlewareJSON(controllers.GetUser)).Methods("GET")
@@ -54,8 +54,8 @@ func main() {
 	if port == "" {
 		port = "8000"
 	}
-	handler := cors.AllowAll().Handler(router)
-	log.Fatal(http.ListenAndServe(":"+port, handler))
-	//log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"POST", "PUT", "GET", "DELETE", "PATCH", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*", "‘http://localhost:3000", "‘http://localhost:3001"}))(router)))
+	//handler := cors.AllowAll().Handler(router)
+	//log.Fatal(http.ListenAndServe(":"+port, handler))
+	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"POST", "PUT", "GET", "DELETE", "PATCH", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(router)))
 
 }
