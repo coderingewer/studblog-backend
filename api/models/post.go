@@ -54,6 +54,7 @@ func (p *Post) FindAllPosts() ([]Post, error) {
 	if len(posts) > 0 {
 		for i, _ := range posts {
 			err := GetDB().Debug().Table("users").Where("id=?", &posts[i].UserID).Take(&posts[i].Sender).Error
+			err = GetDB().Debug().Table("images").Where("id=?", &posts[i].Sender.ImageID).Take(&posts[i].Sender.Image).Error
 			if err != nil {
 				return []Post{}, err
 			}
