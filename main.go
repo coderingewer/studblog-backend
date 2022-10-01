@@ -56,6 +56,6 @@ func main() {
 	}
 	handler := cors.AllowAll().Handler(router)
 	log.Fatal(http.ListenAndServe(":"+port, handler))
-	///log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"POST", "PUT", "GET", "DELETE", "PATCH", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*", "‘http://localhost:3000", "‘http://localhost:3001"}))(router)))
+	//log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"POST", "PUT", "GET", "DELETE", "PATCH", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*", "‘http://localhost:3000", "‘http://localhost:3001"}))(router)))
 
 }
