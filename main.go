@@ -8,8 +8,8 @@ import (
 	"studapp-blog/api/utils"
 	"studapp-blog/middlewares"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 )
 
 func Hello(w http.ResponseWriter, r *http.Request) {
@@ -54,6 +54,5 @@ func main() {
 	if port == "" {
 		port = "8000"
 	}
-	handler := cors.AllowAll().Handler(router)
-	log.Fatal(http.ListenAndServe(":"+port, handler))
+	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"POST", "PUT", "GET", "DELETE", "PATCH", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(router)))
 }
