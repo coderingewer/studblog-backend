@@ -152,6 +152,10 @@ func (p *Post) FinBYUserID(uid uint) ([]Post, error) {
 			if err != nil {
 				return []Post{}, err
 			}
+			err = GetDB().Debug().Table("images").Where("id=?", &posts[i].PhotoID).Take(&posts[i].Image).Error
+			if err != nil {
+				return []Post{}, err
+			}
 		}
 	}
 	return posts, nil
