@@ -54,8 +54,13 @@ func main() {
 	if port == "" {
 		port = "8000"
 	}
+
 	//handler := cors.AllowAll().Handler(router)
 	//log.Fatal(http.ListenAndServe(":"+port, handler))
-	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"POST", "PUT", "GET", "DELETE", "PATCH", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*", "https://studblog-demo-2.netlify.app", "http://localhost:3000"}))(router)))
+
+	log.Fatal(http.ListenAndServe(":"+port,
+		handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
+			handlers.AllowedMethods([]string{"POST", "PUT", "GET", "DELETE", "PATCH", "HEAD", "OPTIONS"}),
+			handlers.AllowedOrigins([]string{"*"}))(router)))
 
 }
