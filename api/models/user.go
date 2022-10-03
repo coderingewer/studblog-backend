@@ -129,11 +129,6 @@ func (u *User) FindByID(uid uint) (*User, error) {
 	if err != nil {
 		return &User{}, err
 	}
-	err = GetDB().Debug().Table("posts").Where("user_id=?", u.ID).Find(&u.Posts).Error
-	if err != nil {
-		return &User{}, err
-	}
-
 	return u, err
 }
 
