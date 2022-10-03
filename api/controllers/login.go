@@ -33,7 +33,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	token, user, err := SignIn(user.Email, user.Password)
 	if err != nil {
-		utils.ERROR(w, http.StatusUnprocessableEntity, err)
+		utils.ERROR(w, http.StatusBadRequest, err)
 		fmt.Println(string(err.Error()))
 		return
 	}
