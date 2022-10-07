@@ -89,9 +89,8 @@ func (u *User) SaveUser() (*User, error) {
 	db := GetDB()
 	err := db.Debug().Create(&u).Error
 	if err != nil {
-		return &User{}, err
+		return &User{}, errors.New("kullanıcı oluşturulamadı")
 	}
-	err = db.Debug().Table("images").Where("id=?", u.ImageID).Take(&u.Image).Error
 	return u, nil
 }
 
@@ -101,13 +100,13 @@ func (u *User) FindAllUsers() ([]User, error) {
 	users := []User{}
 	err = db.Debug().Table("users").Limit(100).Find(&users).Error
 	if err != nil {
-		return []User{}, err
+		return []User{}, errors.New("Kullanıclar yüklenemedi")
 	}
 	if len(users) > 0 {
 		for i, _ := range users {
 			err = GetDB().Debug().Table("images").Where("id=?", &users[i].ImageID).Take(&users[i].Image).Error
 			if err != nil {
-				return []User{}, err
+				return []User{}, errors.New("Kullanıcıya ait profil fotoğrafı yok")
 			}
 		}
 	}
@@ -119,15 +118,15 @@ func (u *User) FindByID(uid uint) (*User, error) {
 	db = GetDB()
 	err = db.Debug().Table("users").Where("id=?", uid).Take(&u).Error
 	if err != nil {
-		return &User{}, err
+		return &User{}, errors.New("Kullanıcı bulunamadı")
 	}
 	err = db.Debug().Table("posts").Where("user_id=?", uid).Find(&u.Posts).Error
 	if err != nil {
-		return &User{}, err
+		return &User{}, errors.New("Kullanıcıya ait gönderi verisi alınamadı")
 	}
 	err = db.Debug().Table("images").Where("id=?", u.ImageID).Find(&u.Image).Error
 	if err != nil {
-		return &User{}, err
+		return &User{}, errors.New("Kullanıcının profil fotoğrafı alınamadı")
 	}
 	return u, err
 }
@@ -146,7 +145,7 @@ func (u *User) UpdateAUser(uid uint) (*User, error) {
 		},
 	)
 	if db.Error != nil {
-		return &User{}, db.Error
+		return &User{}, errors.New("Kullanıcı Güncellenemedi")
 	}
 	err = GetDB().Table("users").Where("id=?", uid).Take(&u).Error
 	if err != nil {
@@ -158,17 +157,13 @@ func (u *User) UpdateAUser(uid uint) (*User, error) {
 func (u *User) DeleteByID(uid uint) (int64, error) {
 	db := GetDB().Debug().Table("users").Where("id=?", uid).Take(&u).Delete(&User{})
 	if db.Error != nil {
-		return 0, db.Error
+		return 0, errors.New("Kullanıcı silinemedi")
 	}
 	return db.RowsAffected, nil
 
 }
 
 func (u *User) UpdatePassword(uid uint, password string) error {
-	err := u.BeforeSAve()
-	if err != nil {
-		log.Fatal(err)
-	}
 	db := GetDB().Table("users").Where("id=?", uid).UpdateColumn(
 		map[string]interface{}{
 			"password":   password,
@@ -176,9 +171,9 @@ func (u *User) UpdatePassword(uid uint, password string) error {
 		},
 	)
 	if db.Error != nil {
-		return db.Error
+		return errors.New("Şifre güncelleme hatası")
 	}
-	err = GetDB().Table("users").Where("id=?", uid).Take(&u).Error
+	err := GetDB().Table("users").Where("id=?", uid).Take(&u).Error
 	if err != nil {
 		return err
 	}

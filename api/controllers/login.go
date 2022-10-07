@@ -51,8 +51,7 @@ func SignIn(email, password string) (string, models.User, error) {
 	user := models.User{}
 	err = models.GetDB().Debug().Table("users").Where("email=?", email).First(&user).Error
 	if err != nil {
-		fmt.Println(string(err.Error()))
-		return "", user, err
+		return "", user, errors.New("Kullanıcı bulunamadı")
 	}
 	err = models.VerifyPassword(user.Password, password)
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
