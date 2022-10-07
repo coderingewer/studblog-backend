@@ -36,7 +36,15 @@ func (fav Favorite) AddPostToList() (Favorite, error) {
 }
 
 func (fav Favorite) RemoveFromList(favid uint) error {
-	err := GetDB().Table("favarite").Where("id=?", favid).Take(&fav).Delete(Favorite{}).Error
+	err := GetDB().Table("favarites").Where("id=?", favid).Take(&fav).Delete(Favorite{}).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (favs *FavoritesList) DeleteList(favsid uint) error {
+	err := GetDB().Table("favarites").Where("id=?", favsid).Take(&favs).Delete(&FavoritesList{}).Error
 	if err != nil {
 		return err
 	}
@@ -72,4 +80,20 @@ func (favs FavoritesList) UpdateFavList(favsId uint) (FavoritesList, error) {
 		return FavoritesList{}, err.Error
 	}
 	return favs, nil
+}
+
+func (favs *FavoritesList) FindByID(id uint) (*FavoritesList, error) {
+	err := GetDB().Table("favorites_lists").Where("id = ?", id).Take(&favs).Error
+	if err != nil {
+		return &FavoritesList{}, err
+	}
+	return favs, nil
+}
+
+func (fav *Favorite) FindByID(id uint) (*Favorite, error) {
+	err := GetDB().Table("favorites").Where("id = ?", id).Take(&fav).Error
+	if err != nil {
+		return &Favorite{}, err
+	}
+	return fav, nil
 }
