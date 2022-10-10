@@ -99,6 +99,11 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusInternalServerError, err)
 		return
 	}
+	view := models.View{}
+	err = view.ViewPost(postReceived.ID)
+	if err != nil {
+		utils.ERROR(w, http.StatusBadRequest, err)
+	}
 	respPost := models.PostdetailReponse{}
 	restPst := respPost.PostToPostDetailResponse(*postReceived)
 	utils.JSON(w, http.StatusOK, restPst)
