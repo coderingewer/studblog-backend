@@ -45,8 +45,10 @@ func NewFavsList(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusInternalServerError, formattedError)
 		return
 	}
+	response := models.ResponseFavoritesList{}
+	FavsRes := response.FavoriteToResponse(listcreated)
 	w.Header().Set("Location", fmt.Sprintf("%s%s%d", r.Host, r.URL, list.ID))
-	utils.JSON(w, http.StatusCreated, listcreated)
+	utils.JSON(w, http.StatusCreated, FavsRes)
 }
 
 func AddItemToList(w http.ResponseWriter, r *http.Request) {
@@ -73,16 +75,31 @@ func AddItemToList(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusUnauthorized, errors.New("Liste size ait değil"))
 		return
 	}
-	itemAdded, err := item.AddPostToList()
-	if err != nil {
-		formattedError := utils.FormatError(err.Error())
-		utils.ERROR(w, http.StatusInternalServerError, formattedError)
-		return
-	}
-	w.Header().Set("Location", fmt.Sprintf("%s%s%d", r.Host, r.URL, item.ID))
-	utils.JSON(w, http.StatusCreated, itemAdded)
-}
+	items := []models.Favorite{}
+	err = models.GetDB().Debug().Table("favorites").Where("list_id=?", favsList.ID).Find(&items).Error
 
+	if err != nil {
+		utils.ERROR(w, http.StatusNotFound, err)
+	}
+
+	if len(items) > 0 {
+		for i, _ := range items {
+			if items[i].PostId == item.PostId {
+				utils.ERROR(w, http.StatusBadRequest, errors.New("Zaten listede var"))
+				return
+			}
+		}
+		item.UserId = uid
+		itemAdded, err := item.AddPostToList()
+		if err != nil {
+			formattedError := utils.FormatError(err.Error())
+			utils.ERROR(w, http.StatusInternalServerError, formattedError)
+			return
+		}
+		w.Header().Set("Location", fmt.Sprintf("%s%s%d", r.Host, r.URL, item.ID))
+		utils.JSON(w, http.StatusCreated, itemAdded)
+	}
+}
 func DeleteFavsList(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	listid, err := strconv.ParseUint(vars["id"], 10, 64)
@@ -172,6 +189,52 @@ func UpdateFavsList(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusInternalServerError, formattedError)
 		return
 	}
-	utils.JSON(w, http.StatusOK, listUpdated)
+	response := models.ResponseFavoritesList{}
+	FavsRes := response.FavoriteToResponse(listUpdated)
+	utils.JSON(w, http.StatusOK, FavsRes)
+
+}
+
+func GetFavsByUserId(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	uid, err := strconv.ParseUint(vars["userId"], 10, 64)
+	if err != nil {
+		utils.ERROR(w, http.StatusBadRequest, err)
+		return
+	}
+	favs := models.FavoritesList{}
+	favsLists, err := favs.FindFavsListsByUserID(uint(uid))
+	if err != nil {
+		utils.ERROR(w, http.StatusNotFound, err)
+		return
+	}
+	respFavsList := []models.ResponseFavoritesList{}
+	respList := models.ResponseFavoritesList{}
+	if len(favsLists) > 0 {
+		for i, _ := range favsLists {
+			restLst := respList.FavoriteToResponse(favsLists[i])
+			respFavsList = append(respFavsList, restLst)
+		}
+	}
+	utils.JSON(w, http.StatusOK, respFavsList)
+}
+
+func GetFavsById(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	listId, err := strconv.ParseUint(vars["id"], 10, 64)
+	if err != nil {
+		utils.ERROR(w, http.StatusBadRequest, err)
+		return
+	}
+	list := models.FavoritesList{}
+
+	listGotten, err := list.FindByID(uint(listId))
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, err)
+		return
+	}
+	response := models.ResponseFavoritesList{}
+	FavsRes := response.FavoriteToResponse(*listGotten)
+	utils.JSON(w, http.StatusOK, FavsRes)
 
 }

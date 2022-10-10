@@ -178,8 +178,8 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusBadRequest, err)
 		return
 	}
-	usrRes := models.UserResponse{}
-	usrR := usrRes.UserToResponse(*userGotten)
+	usrRes := models.UserDetailResponse{}
+	usrR := usrRes.UserToUserDetailResponse(*userGotten)
 	utils.JSON(w, http.StatusOK, usrR)
 }
 

@@ -50,6 +50,15 @@ func main() {
 	router.HandleFunc("/api/images/upload", middlewares.SetMiddlewareJSON(controllers.ImgUpload)).Methods("POST")
 	router.HandleFunc("/api/images/update/{imageId}", middlewares.SetMiddlewareJSON(controllers.UpdateImage)).Methods("POST")
 	router.HandleFunc("/api/images/getAll", middlewares.SetMiddlewareJSON(controllers.GetAllImages)).Methods("GET")
+	//fav lists
+	router.HandleFunc("/api/favs/new", middlewares.SetMiddlewareJSON(controllers.NewFavsList)).Methods("POST")
+	router.HandleFunc("/api/favs/additem", middlewares.SetMiddlewareJSON(controllers.AddItemToList)).Methods("POST")
+	router.HandleFunc("/api/favs/delete/{id}", middlewares.SetMiddlewareAuthentication(controllers.DeleteFavsList)).Methods("DELETE")
+	router.HandleFunc("/api/favs/removeitem/{id}", middlewares.SetMiddlewareAuthentication(controllers.DeleteFavFromList)).Methods("DELETE")
+	router.HandleFunc("/api/favs/getByUserId/{userId}", middlewares.SetMiddlewareJSON(controllers.GetFavsByUserId)).Methods("GET")
+	router.HandleFunc("/api/favs/getById/{id}", middlewares.SetMiddlewareJSON(controllers.GetFavsById)).Methods("GET")
+	router.HandleFunc("/api/favs/update/{id}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(controllers.UpdateFavsList))).Methods("POST")
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000"

@@ -33,6 +33,12 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
 		return
 	}
+	user := models.User{}
+	author, err := user.FindByID(uid)
+	if !author.Isvalid {
+		utils.ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
+		return
+	}
 	photo := models.Image{}
 	img, err := photo.SaveImage()
 	if err != nil {
@@ -92,8 +98,8 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusInternalServerError, err)
 		return
 	}
-	respPost := models.PostResponse{}
-	restPst := respPost.PostToResponse(*postReceived)
+	respPost := models.PostdetailReponse{}
+	restPst := respPost.PostToPostDetailResponse(*postReceived)
 	utils.JSON(w, http.StatusOK, restPst)
 }
 
