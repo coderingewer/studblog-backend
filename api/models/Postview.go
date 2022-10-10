@@ -8,6 +8,7 @@ type View struct {
 }
 
 func (view *View) ViewPost(pid uint) error {
+	view.PostID = pid
 	err := GetDB().Create(&view).Error
 	if err != nil {
 		return err
