@@ -47,6 +47,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	}
 	post.PhotoID = uint(img.ID)
 	post.UserID = uint(uid)
+	post.Category = strings.ToLower(post.Category)
 	postCreated, err := post.Save()
 	if err != nil {
 		formattedError := utils.FormatError(err.Error())
