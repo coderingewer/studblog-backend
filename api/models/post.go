@@ -87,6 +87,10 @@ func (post *Post) FindByID(pid uint) (*Post, error) {
 	if err != nil {
 		return &Post{}, err
 	}
+	err = GetDB().Debug().Table("images").Where("id=?", &p.Sender.ImageID).Take(&p.Sender.Image).Error
+	if err != nil {
+		return &Post{}, err
+	}
 	err = GetDB().Debug().Table("images").Where("id=?", &p.PhotoID).Take(&p.Image).Error
 	if err != nil {
 		return &Post{}, err
