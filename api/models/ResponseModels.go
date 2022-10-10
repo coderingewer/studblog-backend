@@ -156,6 +156,7 @@ func (pstR PostdetailReponse) PostToPostDetailResponse(post Post) PostdetailRepo
 	pstR.Category = post.Category
 	pstR.SenderId = post.Sender.ID
 	pstR.SenderName = post.Sender.Name
+	pstR.SenderImageUrl = post.Sender.Image.Url
 	pstR.SenderUserName = post.Sender.Username
 	return pstR
 }
