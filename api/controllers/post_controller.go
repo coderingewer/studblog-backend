@@ -39,6 +39,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	photo := models.Image{}
+	photo.Prepare()
 	img, err := photo.SaveImage()
 	if err != nil {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)

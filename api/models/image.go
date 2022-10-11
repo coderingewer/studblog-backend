@@ -1,9 +1,7 @@
 package models
 
 import (
-	"html"
 	"mime/multipart"
-	"strings"
 	"studapp-blog/api/helpers"
 
 	"github.com/go-playground/validator"
@@ -19,11 +17,6 @@ type Image struct {
 	Url string `json:"url,omitempty" validate:"required"`
 }
 
-func (img *Image) Prepare() {
-	img.ID = 0
-	img.Url = html.EscapeString(strings.TrimSpace(img.Url))
-}
-
 var (
 	validate = validator.New()
 )
@@ -33,6 +26,10 @@ type mediaUpload interface {
 }
 
 type media struct{}
+
+func (i *Image) Prepare() {
+	i.Url = "https://res.cloudinary.com/ddeatrwxs/image/upload/v1661433477/studapp/placeholder-image_ewmdou.png"
+}
 
 func NewMediaUpload() mediaUpload {
 	return &media{}
