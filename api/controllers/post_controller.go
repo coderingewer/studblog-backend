@@ -27,7 +27,6 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
-	post.Prepare()
 	uid, err := auth.ExtractTokenID(r)
 	if err != nil {
 		utils.ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
@@ -48,6 +47,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	post.PhotoID = uint(img.ID)
 	post.UserID = uint(uid)
 	post.Category = strings.ToLower(post.Category)
+	post.Prepare()
 	postCreated, err := post.Save()
 	if err != nil {
 		formattedError := utils.FormatError(err.Error())
