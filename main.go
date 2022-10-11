@@ -36,6 +36,7 @@ func main() {
 	//Posts
 	router.HandleFunc("/api/posts/new", middlewares.SetMiddlewareJSON(controllers.CreatePost)).Methods("POST")
 	router.HandleFunc("/api/posts/getAll", middlewares.SetMiddlewareJSON(controllers.GetPosts)).Methods("GET")
+	router.HandleFunc("/api/posts/getPopulars", middlewares.SetMiddlewareJSON(controllers.GetPopularPosts)).Methods("GET")
 	router.HandleFunc("/api/posts/getById/{id}", middlewares.SetMiddlewareJSON(controllers.GetPost)).Methods("GET")
 	router.HandleFunc("/api/posts/getByUserId/{userId}", middlewares.SetMiddlewareJSON(controllers.GetPostsByUserID)).Methods("GET")
 	router.HandleFunc("/api/posts/getByCategory/{category}", middlewares.SetMiddlewareJSON(controllers.GetPostsByCategory)).Methods("GET")

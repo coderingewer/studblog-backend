@@ -46,7 +46,7 @@ func (p *Post) Save() (*Post, error) {
 
 func (p *Post) FindAllPosts() ([]Post, error) {
 	posts := []Post{}
-	err := GetDB().Debug().Table("posts").Order("created_at desc").Find(&posts).Limit(10).Error
+	err := GetDB().Debug().Table("posts").Order("created_at desc").Find(&posts).Error
 	if err != nil {
 		return []Post{}, err
 	}
@@ -61,11 +61,10 @@ func (p *Post) FindAllPosts() ([]Post, error) {
 			if err != nil {
 				return []Post{}, err
 			}
-			err = GetDB().Debug().Table("views").Where("post_id=?", &p.ID).Find(&p.Views).Error
+			err = GetDB().Debug().Table("views").Where("post_id=?", &posts[i].ID).Find(&posts[i].Views).Error
 			if err != nil {
 				return []Post{}, err
 			}
-
 		}
 	}
 	return posts, nil
@@ -103,13 +102,22 @@ func (post *Post) FindByID(pid uint) (*Post, error) {
 
 func (post *Post) FindByCategory(category string) ([]Post, error) {
 	posts := []Post{}
-	err := GetDB().Debug().Table("posts").Where("category= ?", category).Find(&posts).Error
+	err := GetDB().Debug().Table("posts").Where("category= ?", category).Order("created_at desc").Find(&posts).Error
 	if err != nil {
 		return []Post{}, err
 	}
 	if len(posts) > 0 {
 		for i, _ := range posts {
 			err := GetDB().Debug().Table("users").Where("id=?", &posts[i].UserID).Take(&posts[i].Sender).Error
+			err = GetDB().Debug().Table("images").Where("id=?", &posts[i].Sender.ImageID).Take(&posts[i].Sender.Image).Error
+			if err != nil {
+				return []Post{}, err
+			}
+			err = GetDB().Debug().Table("images").Where("id=?", &posts[i].PhotoID).Take(&posts[i].Image).Error
+			if err != nil {
+				return []Post{}, err
+			}
+			err = GetDB().Debug().Table("views").Where("post_id=?", &posts[i].ID).Find(&posts[i].Views).Error
 			if err != nil {
 				return []Post{}, err
 			}
@@ -145,7 +153,7 @@ func (p *Post) DeleteByID(pid uint) (int64, error) {
 
 func (p *Post) FinBYUserID(uid uint) ([]Post, error) {
 	posts := []Post{}
-	err := GetDB().Debug().Table("posts").Where("user_id = ?", uid).Find(&posts).Error
+	err := GetDB().Debug().Table("posts").Where("user_id = ?", uid).Order("created_at desc").Find(&posts).Error
 	if err != nil {
 		return []Post{}, err
 	}
@@ -178,4 +186,31 @@ func (p *Post) UpdatePostImage(pid uint) (*Post, error) {
 		return &Post{}, err
 	}
 	return p, nil
+}
+
+func (p *Post) FindPopularPosts() ([]Post, error) {
+	posts := []Post{}
+	err := GetDB().Debug().Table("posts").Order("created_at desc").Limit(5).Find(&posts).Limit(10).Error
+	if err != nil {
+		return []Post{}, err
+	}
+	if len(posts) > 0 {
+		for i, _ := range posts {
+			err := GetDB().Debug().Table("users").Where("id=?", &posts[i].UserID).Take(&posts[i].Sender).Error
+			err = GetDB().Debug().Table("images").Where("id=?", &posts[i].Sender.ImageID).Take(&posts[i].Sender.Image).Error
+			if err != nil {
+				return []Post{}, err
+			}
+			err = GetDB().Debug().Table("images").Where("id=?", &posts[i].PhotoID).Take(&posts[i].Image).Error
+			if err != nil {
+				return []Post{}, err
+			}
+			err = GetDB().Debug().Table("views").Where("post_id=?", &p.ID).Find(&p.Views).Error
+			if err != nil {
+				return []Post{}, err
+			}
+
+		}
+	}
+	return posts, nil
 }

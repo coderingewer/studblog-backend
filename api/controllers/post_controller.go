@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"studapp-blog/api/auth"
@@ -335,4 +336,28 @@ func UnLikePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	utils.JSON(w, http.StatusOK, "")
+}
+
+func GetPopularPosts(w http.ResponseWriter, r *http.Request) {
+	post := models.Post{}
+	posts, err := post.FindAllPosts()
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, err)
+		return
+	}
+	respPosts := []models.PostdetailReponse{}
+	respPost := models.PostdetailReponse{}
+	if len(posts) > 0 {
+		for i, _ := range posts {
+			if utils.CaluclateLastDay(posts[i].CreatedAt) {
+				restPst := respPost.PostToPostDetailResponse(posts[i])
+				respPosts = append(respPosts, restPst)
+			}
+		}
+		sort.Slice(respPosts, func(i, j int) bool {
+			return respPosts[i].Views > respPosts[j].Views
+		})
+	}
+	outPosts := respPosts[:5]
+	utils.JSON(w, http.StatusOK, outPosts)
 }
