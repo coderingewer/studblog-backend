@@ -26,7 +26,6 @@ func (p *Post) Prepare() {
 	p.ID = 0
 	p.Sender = User{}
 	p.IsValid = true
-	p.Image.Url = "https://res.cloudinary.com/ddeatrwxs/image/upload/v1661433477/studapp/placeholder-image_ewmdou.png"
 }
 
 func (p *Post) Save() (*Post, error) {
