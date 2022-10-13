@@ -31,6 +31,7 @@ type UserDetailResponse struct {
 	UserImageID  uint   `json:"userImageId"`
 	Email        string `json:"email"`
 	UserRole     string `json:"user_role"`
+	Isvalid        bool   `json:"isValid"`
 }
 
 type UpdatePost struct {
@@ -120,6 +121,7 @@ func (usrR UserDetailResponse) UserToUserDetailResponse(usr User) UserDetailResp
 	usrR.Username = usr.Username
 	usrR.Email = usr.Email
 	usrR.UserRole = usr.UserRole
+	usrR.Isvalid = usr.Isvalid
 	return usrR
 }
 
