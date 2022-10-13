@@ -361,5 +361,5 @@ func GetPopularPosts(w http.ResponseWriter, r *http.Request) {
 	if len(respPosts) >=5{
 		respPosts := respPosts[:5]
 	}
-	utils.JSON(w, http.StatusOK, outPosts)
+	utils.JSON(w, http.StatusOK, respPosts)
 }
