@@ -358,6 +358,8 @@ func GetPopularPosts(w http.ResponseWriter, r *http.Request) {
 			return respPosts[i].Views > respPosts[j].Views
 		})
 	}
-	outPosts := respPosts[:5]
+	if len(respPosts) >=5{
+		respPosts := respPosts[:5]
+	}
 	utils.JSON(w, http.StatusOK, outPosts)
 }
