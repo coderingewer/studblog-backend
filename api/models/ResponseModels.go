@@ -13,7 +13,7 @@ type ResponseUser struct {
 	UserImage Image  `json:"user_image"`
 	Token     string `json:"token"`
 	UserRole  string `json:"user_role"`
-	Isvalid        bool   `json:"isValid"`
+	Isvalid   bool   `json:"isValid"`
 }
 type UserResponse struct {
 	ID        uint   `json:"ID"`

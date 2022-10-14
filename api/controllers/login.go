@@ -37,13 +37,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(string(err.Error()))
 		return
 	}
-	usr := models.ResponseUser{}
-	usr.ID = user.ID
-	usr.Token = token
-	usr.Username = user.Username
-	usr.Name = user.Name
-	usr.UserRole = user.UserRole
-	utils.JSON(w, http.StatusOK, usr)
+	usrRes := models.UserDetailResponse{}
+	usrR := usrRes.UserToUserDetailResponse(*user)
+	utils.JSON(w, http.StatusOK, usrR)
 }
 
 func SignIn(email, password string) (string, models.User, error) {
