@@ -13,6 +13,7 @@ type ResponseUser struct {
 	UserImage Image  `json:"user_image"`
 	Token     string `json:"token"`
 	UserRole  string `json:"user_role"`
+	Isvalid        bool   `json:"isValid"`
 }
 type UserResponse struct {
 	ID        uint   `json:"ID"`
@@ -21,6 +22,7 @@ type UserResponse struct {
 	UserImage Image  `json:"user_image"`
 	Email     string `json:"email"`
 	UserRole  string `json:"user_role"`
+	Isvalid        bool   `json:"isValid"`
 }
 
 type UserDetailResponse struct {
@@ -110,6 +112,8 @@ func (usrR UserResponse) UserToResponse(usr User) UserResponse {
 	usrR.Username = usr.Username
 	usrR.Email = usr.Email
 	usrR.UserRole = usr.UserRole
+	usrR.Isvalid  = usr.Isvalid
+
 	return usrR
 }
 
