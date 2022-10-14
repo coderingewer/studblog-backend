@@ -43,7 +43,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	usr.Username = user.Username
 	usr.Name = user.Name
 	usr.UserRole = user.UserRole
-	usr.IsValid = user.IsValid
+	usr.Isvalid = user.Isvalid
 	utils.JSON(w, http.StatusOK, usr)
 }
 
