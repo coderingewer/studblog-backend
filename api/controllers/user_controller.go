@@ -230,11 +230,13 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
+		fmt.Println("s")
 		return
 	}
 	err = json.Unmarshal(body, &user)
 	if err != nil {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
+		fmt.Println("d")
 		return
 	}
 
