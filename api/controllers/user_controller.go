@@ -239,11 +239,6 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user.Prepare()
-	if err != nil {
-		utils.ERROR(w, http.StatusUnprocessableEntity, err)
-		return
-	}
-
 	updatedUser, err := user.UpdateAUser(uint(uid))
 	if err != nil {
 		formattedError := utils.FormatError(err.Error())
