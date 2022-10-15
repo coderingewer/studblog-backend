@@ -40,6 +40,10 @@ func (p *Post) Save() (*Post, error) {
 			fmt.Println("hoh")
 			return &Post{}, err
 		}
+		err = GetDB().Debug().Table("images").Where("id=?", &p.PhotoID).Take(&p.Image).Error
+			if err != nil {
+				return &Post{}, err
+			}
 	}
 	return p, nil
 }
