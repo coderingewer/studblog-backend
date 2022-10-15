@@ -131,7 +131,6 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	post.UserID = uint(uid)
-	post.Category = strings.ToLower(post.Category)
 	if uid != post.UserID {
 		utils.ERROR(w, http.StatusUnauthorized, errors.New("Yetkisi yok"))
 		return
@@ -143,11 +142,12 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
-
+	
 	postUpdate := models.Post{}
 	json.Unmarshal(body, &postUpdate)
-
+	
 	postUpdate.UserID = post.UserID
+	postUpdate.Category = strings.ToLower(postUpdate.Category)
 	if uid != postUpdate.UserID {
 		utils.ERROR(w, http.StatusUnauthorized, errors.New("Yetkisi yok"))
 		return
