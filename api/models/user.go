@@ -73,7 +73,7 @@ func (u *User) Validate(action string) error {
 			return errors.New("Kullanıcı Adı Zorulu")
 		}
 		if u.Password == "" {
-			return errors.New("Şifre Adı Zorulu")
+			return errors.New("Şifre Zorulu")
 		}
 		if u.Username == "" {
 			return errors.New("E Posta Adresi Zorulu")
@@ -89,7 +89,7 @@ func (u *User) SaveUser() (*User, error) {
 	db := GetDB()
 	err := db.Debug().Create(&u).Error
 	if err != nil {
-		return &User{}, errors.New("kullanıcı oluşturulamadı")
+		return &User{}, err
 	}
 	return u, nil
 }
