@@ -131,6 +131,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	post.UserID = uint(uid)
+	post.Category = strings.ToLower(post.Category)
 	if uid != post.UserID {
 		utils.ERROR(w, http.StatusUnauthorized, errors.New("Yetkisi yok"))
 		return
