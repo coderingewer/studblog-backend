@@ -14,6 +14,7 @@ type File struct {
 
 type Image struct {
 	gorm.Model
+	UserId uint `json:"userId"`
 	Url string `json:"url,omitempty" validate:"required"`
 }
 

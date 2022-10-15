@@ -49,9 +49,9 @@ func (u *User) Prepare() {
 	u.UpdatedAt = time.Now()
 	u.DeletedAt = nil
 	u.Isvalid = false
-	u.UserRole = "BLOGGER"
+	u.UserRole = "KULLANICI"
 	u.Image.ID = u.ImageID
-	u.Image.Url = "https://res.cloudinary.com/ddeatrwxs/image/upload/v1661433330/studapp/User_nhxoz7.png"
+	u.Image.Url = "https://res.cloudinary.com/ddeatrwxs/image/upload/v1661888774/studapp/spwdg9relpxlmozdck6b.png"
 }
 
 func (u *User) Validate(action string) error {
