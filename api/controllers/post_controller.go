@@ -56,8 +56,8 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusInternalServerError, formattedError)
 		return
 	}
-	respPost := models.PostResponse{}
-	restPst := respPost.PostToResponse(*postCreated)
+	respPost := models.PostdetailReponse{}
+	restPst := respPost.PostToPostDetailResponse(*postCreated)
 
 	/*
 		tag := models.Tag{}
