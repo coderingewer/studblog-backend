@@ -19,11 +19,14 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
+		fmt.Println("0")
+		return
 	}
 	user := models.User{}
 	err = json.Unmarshal(body, &user)
 	if err != nil {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
+		fmt.Println("1")
 		return
 	}
 	user.Prepare()
@@ -31,12 +34,14 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	err = user.Validate("register")
 	if err != nil {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
+		fmt.Println("2")
 		return
 	}
 	usrImg := models.Image{}
 	img, err := usrImg.SaveImage()
 	if err != nil {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
+		fmt.Println("3")
 		return
 	}
 	user.ImageID = img.ID
