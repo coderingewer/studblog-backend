@@ -13,7 +13,7 @@ func ImageUploadHelper(input interface{}) (string, error) {
 	defer cancel()
 
 	cld, _ := cloudinary.NewFromParams("ddeatrwxs", "641461484529384", "Pg62Uh1szh18LjcCjCHA14z_oA8")
-	uploadParam, err := cld.Upload.Upload(ctx, input, uploader.UploadParams{Folder: "studapp",  Transformation: "q_50" })
+	uploadParam, err := cld.Upload.Upload(ctx, input, uploader.UploadParams{Folder: "studapp",  Transformation: "q_30" })
 	if err != nil {
 		return "", err
 	}
