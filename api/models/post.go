@@ -131,6 +131,7 @@ func (p *Post) UpdatePost(pid uint) (*Post, error) {
 		map[string]interface{}{
 			"title":   p.Title,
 			"content": p.Content,
+			"category": p.Category,
 		},
 	)
 	if db.Error != nil {
