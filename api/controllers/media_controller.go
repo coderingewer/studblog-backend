@@ -3,6 +3,8 @@ package controllers
 import (
 	"net/http"
 	"strconv"
+	"errors"
+	"studapp-blog/api/auth"
 	"studapp-blog/api/models"
 	"studapp-blog/api/utils"
 
@@ -10,6 +12,11 @@ import (
 )
 
 func ImgUpload(w http.ResponseWriter, r *http.Request) {
+	_, err := auth.ExtractTokenID(r)
+	if err != nil {
+		utils.ERROR(w, http.StatusUnauthorized, errors.New("Yetkisi yok"))
+		return
+	}
 	img := models.Image{}
 	formFile, _, err := r.FormFile("file")
 	if err != nil {
@@ -35,6 +42,11 @@ func UpdateImage(w http.ResponseWriter, r *http.Request) {
 	imgid, err := strconv.ParseUint(vars["imageId"], 10, 64)
 	if err != nil {
 		utils.ERROR(w, http.StatusBadRequest, err)
+		return
+	}
+	_, err = auth.ExtractTokenID(r)
+	if err != nil {
+		utils.ERROR(w, http.StatusUnauthorized, errors.New("Yetkisi yok"))
 		return
 	}
 	formFile, _, err := r.FormFile("file")
