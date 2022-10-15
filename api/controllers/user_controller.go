@@ -34,7 +34,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	err = user.Validate("register")
 	if err != nil {
 		formatedError := utils.FormatError(err.Error())
-		utils.ERROR(w, http.StatusUnprocessableEntity, formatedError)
+		utils.ERROR(w, http.StatusBadRequest, formatedError)
 		fmt.Println("2")
 		return
 	}
