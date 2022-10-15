@@ -71,6 +71,6 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port,
 		handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
 			handlers.AllowedMethods([]string{"POST", "PUT", "GET", "DELETE", "PATCH", "HEAD", "OPTIONS"}),
-			handlers.AllowedOrigins([]string{"https://www.studappblog.com/", "localhost:3000", "https://studblog-demo-2.netlify.app/"}))(router)))
+			handlers.AllowedOrigins([]string{"*"}))(router)))
 
 }
