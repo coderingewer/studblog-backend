@@ -186,13 +186,14 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusNotFound, err)
 		return
 	}
-	view := models.View{}
-	err = view.DeleteViews(uint(pid))
-	if err != nil {
-		utils.ERROR(w, http.StatusNotFound, err)
-		return
-	}
-
+	/*
+		view := models.View{}
+		err = view.DeleteViews(uint(pid))
+		if err != nil {
+			utils.ERROR(w, http.StatusNotFound, err)
+			return
+		}
+	*/
 	if uid != post.UserID {
 		utils.ERROR(w, http.StatusUnauthorized, errors.New("Yetkisi yok"))
 		return
