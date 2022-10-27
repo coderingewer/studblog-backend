@@ -22,7 +22,7 @@ func (view *View) ViewPost(pid uint) error {
 
 func (view *View) DeleteViews(pid uint) error {
 	views := []View{}
-	err := GetDB().Debug().Table("views").Where("post_id", pid).Find(views).Error
+	err := GetDB().Debug().Table("views").Where("post_id=?", pid).Find(&views).Error
 	if err != nil {
 		fmt.Println("hua-1")
 		return err
