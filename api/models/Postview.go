@@ -1,6 +1,10 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"fmt"
+
+	"github.com/jinzhu/gorm"
+)
 
 type View struct {
 	gorm.Model
@@ -20,12 +24,14 @@ func (view *View) DeleteViews(pid uint) error {
 	views := []View{}
 	err := GetDB().Debug().Table("views").Where("post_id", pid).Find(views).Error
 	if err != nil {
+		fmt.Println("hua-1")
 		return err
 	}
 	if len(views) > 0 {
 		for i, _ := range views {
 			db := GetDB().Debug().Table("views").Where("id=? ", views[i].ID).Take(&views[i]).Delete(&View{})
 			if db.Error != nil {
+				fmt.Println("hua-2")
 				return db.Error
 			}
 		}
