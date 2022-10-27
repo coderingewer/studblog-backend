@@ -11,7 +11,7 @@ func CaluclateLastDay(tim time.Time) bool {
 	year := currentYear - tim.Year()
 	month := currentMonth - tim.Month()
 	total := day + year + int(month)
-	if total < 1 {
+	if day < 7 && total < 7 {
 		return true
 	}
 	return false
