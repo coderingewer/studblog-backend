@@ -51,6 +51,7 @@ func (u *User) Prepare() {
 	u.Isvalid = false
 	u.UserRole = "KULLANICI"
 	u.Image.ID = u.ImageID
+	u.Email = strings.ToLower(u.Email)
 	u.Image.Url = "https://res.cloudinary.com/ddeatrwxs/image/upload/v1661888774/studapp/spwdg9relpxlmozdck6b.png"
 }
 
@@ -178,4 +179,26 @@ func (u *User) UpdatePassword(uid uint, password string) error {
 		return err
 	}
 	return nil
+}
+
+func (u *User) UpdateAUserByAdmin(email string) (*User, error) {
+	err := u.BeforeSAve()
+	if err != nil {
+		log.Fatal(err)
+	}
+	db := GetDB().Table("users").Where("email=?", email).UpdateColumn(
+		map[string]interface{}{
+			"user_role":  u.UserRole,
+			"isvalid":    u.Isvalid,
+			"updated_at": time.Now(),
+		},
+	)
+	if db.Error != nil {
+		return &User{}, errors.New("Kullanıcı Güncellenemedi")
+	}
+	err = GetDB().Table("users").Where("email=?", email).Take(&u).Error
+	if err != nil {
+		return &User{}, err
+	}
+	return u, nil
 }

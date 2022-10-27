@@ -19,14 +19,12 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
-		fmt.Println("0")
 		return
 	}
 	user := models.User{}
 	err = json.Unmarshal(body, &user)
 	if err != nil {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
-		fmt.Println("1")
 		return
 	}
 	user.Prepare()
@@ -35,14 +33,12 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		formatedError := utils.FormatError(err.Error())
 		utils.ERROR(w, http.StatusBadRequest, formatedError)
-		fmt.Println("2")
 		return
 	}
 	usrImg := models.Image{}
 	img, err := usrImg.SaveImage()
 	if err != nil {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
-		fmt.Println("3")
 		return
 	}
 	user.ImageID = img.ID
@@ -453,4 +449,56 @@ func UpdateUsermage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	utils.JSON(w, http.StatusOK, imgUpdated)
+}
+
+func UpdateUserByAdmin(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	email := vars["email"]
+
+	user := models.User{}
+	tokenID, err := auth.ExtractTokenID(r)
+	if err != nil {
+		utils.ERROR(w, http.StatusUnauthorized, errors.New("Yetkilendirilmemiş"))
+		fmt.Println("hao2")
+		return
+	}
+
+	admin, err := user.FindByID(uint(tokenID))
+	if err != nil {
+		formattedError := utils.FormatError(err.Error())
+		utils.ERROR(w, http.StatusInternalServerError, formattedError)
+		fmt.Println("c")
+		return
+	}
+
+	if admin.UserRole != "SUPER-USER" {
+		utils.ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
+		fmt.Println("hao1")
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		utils.ERROR(w, http.StatusUnprocessableEntity, err)
+		fmt.Println("s")
+		return
+	}
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		utils.ERROR(w, http.StatusUnprocessableEntity, err)
+		fmt.Println("d")
+		return
+	}
+
+	user.Prepare()
+	updatedUser, err := user.UpdateAUserByAdmin(email)
+	if err != nil {
+		formattedError := utils.FormatError(err.Error())
+		utils.ERROR(w, http.StatusInternalServerError, formattedError)
+		fmt.Println("g")
+		return
+	}
+	usrRes := models.UserResponse{}
+	usrR := usrRes.UserToResponse(*updatedUser)
+	utils.JSON(w, http.StatusOK, usrR)
 }

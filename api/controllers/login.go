@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"studapp-blog/api/auth"
 	"studapp-blog/api/models"
 	"studapp-blog/api/utils"
@@ -31,7 +32,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
-	token, user, err := SignIn(user.Email, user.Password)
+	email := strings.ToLower(user.Email)
+	token, user, err := SignIn(email, user.Password)
 	if err != nil {
 		utils.ERROR(w, http.StatusBadRequest, err)
 		fmt.Println(string(err.Error()))

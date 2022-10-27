@@ -32,6 +32,7 @@ func main() {
 	router.HandleFunc("/api/users/updatePasswordByAdmin/{id}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(controllers.UpdatePasswordByAdmin))).Methods("POST")
 	router.HandleFunc("/api/users/login", middlewares.SetMiddlewareJSON(controllers.Login)).Methods("POST")
 	router.HandleFunc("/api/users/updateuserimage", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(controllers.UpdateUsermage))).Methods("POST")
+	router.HandleFunc("/api/users/updatebyAdmin/{email}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(controllers.UpdateUserByAdmin))).Methods("POST")
 
 	//Posts
 	router.HandleFunc("/api/posts/new", middlewares.SetMiddlewareJSON(controllers.CreatePost)).Methods("POST")
@@ -71,6 +72,6 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port,
 		handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
 			handlers.AllowedMethods([]string{"POST", "PUT", "GET", "DELETE", "PATCH", "HEAD", "OPTIONS"}),
-			handlers.AllowedOrigins([]string{"*"}))(router)))
+			handlers.AllowedOrigins([]string{"https://www.studappblog.com", "http://www.studappblog.com", "www.studappblog.com", "studappblog.com", "https://studblog-demo-2.netlify.app", "studblog-demo-2.netlify.app"}))(router)))
 
 }

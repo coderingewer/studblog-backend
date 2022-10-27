@@ -142,10 +142,10 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
-	
+
 	postUpdate := models.Post{}
 	json.Unmarshal(body, &postUpdate)
-	
+
 	postUpdate.UserID = post.UserID
 	postUpdate.Category = strings.ToLower(postUpdate.Category)
 	if uid != postUpdate.UserID {
@@ -215,7 +215,15 @@ func GetPostsByUserID(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusInternalServerError, err)
 		return
 	}
-	utils.JSON(w, http.StatusOK, posts)
+	respPosts := []models.PostResponse{}
+	respPost := models.PostResponse{}
+	if len(posts) > 0 {
+		for i, _ := range posts {
+			restPst := respPost.PostToResponse(posts[i])
+			respPosts = append(respPosts, restPst)
+		}
+	}
+	utils.JSON(w, http.StatusOK, respPosts)
 }
 
 func GetPostsByCategory(w http.ResponseWriter, r *http.Request) {
@@ -359,7 +367,7 @@ func GetPopularPosts(w http.ResponseWriter, r *http.Request) {
 			return respPosts[i].Views > respPosts[j].Views
 		})
 	}
-	if len(respPosts) >=5{
+	if len(respPosts) >= 5 {
 		respPosts = respPosts[:5]
 	}
 	utils.JSON(w, http.StatusOK, respPosts)
