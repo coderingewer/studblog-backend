@@ -186,6 +186,7 @@ func (u *User) UpdateAUserByAdmin(email string) (*User, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("user: ", u)
 	db := GetDB().Table("users").Where("email=?", email).UpdateColumn(
 		map[string]interface{}{
 			"user_role":  u.UserRole,
@@ -200,5 +201,6 @@ func (u *User) UpdateAUserByAdmin(email string) (*User, error) {
 	if err != nil {
 		return &User{}, err
 	}
+	fmt.Println(u)
 	return u, nil
 }

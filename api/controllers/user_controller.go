@@ -483,15 +483,14 @@ func UpdateUserByAdmin(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("s")
 		return
 	}
-	err = json.Unmarshal(body, &user)
+	updateUser := models.User{}
+	err = json.Unmarshal(body, &updateUser)
 	if err != nil {
 		utils.ERROR(w, http.StatusUnprocessableEntity, err)
 		fmt.Println("d")
 		return
 	}
-
-	user.Prepare()
-	updatedUser, err := user.UpdateAUserByAdmin(email)
+	updatedUser, err := updateUser.UpdateAUserByAdmin(email)
 	if err != nil {
 		formattedError := utils.FormatError(err.Error())
 		utils.ERROR(w, http.StatusInternalServerError, formattedError)
