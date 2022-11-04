@@ -15,6 +15,7 @@ type ResponseUser struct {
 	UserRole  string `json:"user_role"`
 	Isvalid   bool   `json:"isValid"`
 }
+
 type UserResponse struct {
 	ID        uint   `json:"ID"`
 	Name      string `json:"name"`
@@ -22,7 +23,7 @@ type UserResponse struct {
 	UserImage Image  `json:"user_image"`
 	Email     string `json:"email"`
 	UserRole  string `json:"user_role"`
-	Isvalid        bool   `json:"isValid"`
+	Isvalid   bool   `json:"isValid"`
 }
 
 type UserDetailResponse struct {
@@ -33,7 +34,7 @@ type UserDetailResponse struct {
 	UserImageID  uint   `json:"userImageId"`
 	Email        string `json:"email"`
 	UserRole     string `json:"user_role"`
-	Isvalid        bool   `json:"isValid"`
+	Isvalid      bool   `json:"isValid"`
 }
 
 type UpdatePost struct {
@@ -44,16 +45,6 @@ type UpdatePost struct {
 type UpdatePassUser struct {
 	Password    string `json:"password"`
 	NewPassword string `json:"newPassword"`
-}
-
-func (u *UpdatePassUser) BeforeSAve() error {
-	hashedPassword, err := Hash(u.NewPassword)
-	if err != nil {
-		fmt.Println(string(err.Error()))
-		return err
-	}
-	u.NewPassword = string(hashedPassword)
-	return nil
 }
 
 type PostResponse struct {
@@ -70,12 +61,27 @@ type PostResponse struct {
 }
 
 type PostdetailReponse struct {
+	ID             uint      `json:"ID"`
+	Title          string    `json:"title"`
+	Content        string    `json:"content"`
+	Category       string    ` json:"category"`
+	Views          int       `json:"views"`
+	ImageUrl       string    `json:"image"`
+	ImageId        uint      `json:"imageId"`
+	CreatedAt      string    `json:"created_at"`
+	UpdatedAt      string    `json:"updated_at"`
+	IsValid        bool      `json:"isValid"`
+	SenderId       uint      `json:"senderId"`
+	SenderImageUrl string    `json:"senderImageUrl"`
+	SenderUserName string    `json:"senderUserName"`
+	SenderName     string    `json:"senderName"`
+	Likes          int       `json:"likes"`
+	Comments       []Comment `json:"comments"`
+}
+
+type CommentdetailReponse struct {
 	ID             uint   `json:"ID"`
-	Title          string `json:"title"`
 	Content        string `json:"content"`
-	Category       string ` json:"category"`
-	Views          int    `json:"views"`
-	ImageUrl       string `json:"image"`
 	ImageId        uint   `json:"imageId"`
 	CreatedAt      string `json:"created_at"`
 	UpdatedAt      string `json:"updated_at"`
@@ -105,6 +111,16 @@ type ResponseFavorite struct {
 	Post   Post `json:"post"`
 }
 
+func (u *UpdatePassUser) BeforeSAve() error {
+	hashedPassword, err := Hash(u.NewPassword)
+	if err != nil {
+		fmt.Println(string(err.Error()))
+		return err
+	}
+	u.NewPassword = string(hashedPassword)
+	return nil
+}
+
 func (usrR UserResponse) UserToResponse(usr User) UserResponse {
 	usrR.ID = usr.ID
 	usrR.Name = usr.Name
@@ -112,7 +128,7 @@ func (usrR UserResponse) UserToResponse(usr User) UserResponse {
 	usrR.Username = usr.Username
 	usrR.Email = usr.Email
 	usrR.UserRole = usr.UserRole
-	usrR.Isvalid  = usr.Isvalid
+	usrR.Isvalid = usr.Isvalid
 
 	return usrR
 }
@@ -154,6 +170,7 @@ func (pstR PostdetailReponse) PostToPostDetailResponse(post Post) PostdetailRepo
 	pstR.Title = post.Title
 	pstR.Content = post.Content
 	pstR.Views = len(post.Views)
+	pstR.Likes = len(post.Likes)
 	pstR.IsValid = post.IsValid
 	pstR.CreatedAt = CustomDate(post.CreatedAt)
 	pstR.UpdatedAt = CustomDate(post.UpdatedAt)
@@ -165,6 +182,19 @@ func (pstR PostdetailReponse) PostToPostDetailResponse(post Post) PostdetailRepo
 	pstR.SenderImageUrl = post.Sender.Image.Url
 	pstR.SenderUserName = post.Sender.Username
 	return pstR
+}
+
+func (cmtR CommentdetailReponse) CommentToCommentDetailResponse(comment Comment) CommentdetailReponse {
+	cmtR.ID = comment.ID
+	cmtR.Content = comment.Content
+	cmtR.IsValid = comment.Validated
+	cmtR.CreatedAt = CustomDate(comment.CreatedAt)
+	cmtR.UpdatedAt = CustomDate(comment.UpdatedAt)
+	cmtR.SenderId = comment.UserID
+	cmtR.SenderName = comment.User.Name
+	cmtR.SenderImageUrl = comment.User.Image.Url
+	cmtR.SenderUserName = comment.User.Username
+	return cmtR
 }
 
 func (favRes ResponseFavoritesList) FavoriteToResponse(favs FavoritesList) ResponseFavoritesList {

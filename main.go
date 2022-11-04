@@ -61,6 +61,15 @@ func main() {
 	router.HandleFunc("/api/favs/getById/{id}", middlewares.SetMiddlewareJSON(controllers.GetFavsById)).Methods("GET")
 	router.HandleFunc("/api/favs/update/{id}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(controllers.UpdateFavsList))).Methods("POST")
 
+	//Comments
+	router.HandleFunc("/api/comments/new", middlewares.SetMiddlewareJSON(controllers.CreateComment)).Methods("POST")
+	router.HandleFunc("/api/comments/update/{id}", middlewares.SetMiddlewareJSON(controllers.UpdateComment)).Methods("POST")
+	router.HandleFunc("/api/comments/delete/{id}", middlewares.SetMiddlewareAuthentication(controllers.DeleteComment)).Methods("DELETE")
+	router.HandleFunc("/api/comments/getByUserID/{userId}", middlewares.SetMiddlewareAuthentication(controllers.GetCommentsByUserID)).Methods("GET")
+	router.HandleFunc("/api/comments/getByPostId/{postId}", middlewares.SetMiddlewareJSON(controllers.GetCommentsByPostID)).Methods("GET")
+	router.HandleFunc("/api/comments/getById/{id}", middlewares.SetMiddlewareJSON(controllers.GetComment)).Methods("GET")
+	router.HandleFunc("/api/comments/getAll", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(controllers.GetComments))).Methods("GET")
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000"

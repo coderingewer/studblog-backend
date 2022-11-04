@@ -3,6 +3,7 @@ package models
 import (
 	"mime/multipart"
 	"studapp-blog/api/helpers"
+	"time"
 
 	"github.com/go-playground/validator"
 	"github.com/jinzhu/gorm"
@@ -69,7 +70,8 @@ func (img *Image) DeleteByID(imgid uint) (int64, error) {
 func (img *Image) UpdateImageByID(imgid uint) (*Image, error) {
 	db := GetDB().Debug().Table("images").Where("id=?", imgid).UpdateColumns(
 		map[string]interface{}{
-			"url": img.Url,
+			"url":        img.Url,
+			"updated_at": time.Now(),
 		},
 	)
 	if db.Error != nil {

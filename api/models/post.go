@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/jinzhu/gorm"
 )
@@ -18,6 +19,7 @@ type Post struct {
 	Image    Image     `json:"image"`
 	Likes    []Like    `json:"likes"`
 	Views    []View    `json:"views"`
+	Comments []Comment `json:"comments"`
 	IsValid  bool      `json:"isValid"`
 	PosTags  []PostTag `gorm:"many2many:post_tags" json:"post_tags"`
 }
@@ -41,9 +43,9 @@ func (p *Post) Save() (*Post, error) {
 			return &Post{}, err
 		}
 		err = GetDB().Debug().Table("images").Where("id=?", &p.PhotoID).Take(&p.Image).Error
-			if err != nil {
-				return &Post{}, err
-			}
+		if err != nil {
+			return &Post{}, err
+		}
 	}
 	return p, nil
 }
@@ -101,6 +103,10 @@ func (post *Post) FindByID(pid uint) (*Post, error) {
 	if err != nil {
 		return &Post{}, err
 	}
+	err = GetDB().Debug().Table("comments").Where("post_id=?", &p.ID).Find(&p.Comments).Error
+	if err != nil {
+		return &Post{}, err
+	}
 	return &p, nil
 }
 
@@ -133,9 +139,10 @@ func (post *Post) FindByCategory(category string) ([]Post, error) {
 func (p *Post) UpdatePost(pid uint) (*Post, error) {
 	db := GetDB().Debug().Table("posts").Where("id=?", pid).UpdateColumns(
 		map[string]interface{}{
-			"title":   p.Title,
-			"content": p.Content,
-			"category": p.Category,
+			"title":      p.Title,
+			"content":    p.Content,
+			"category":   p.Category,
+			"updated_at": time.Now(),
 		},
 	)
 	if db.Error != nil {

@@ -1,6 +1,10 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"time"
+
+	"github.com/jinzhu/gorm"
+)
 
 type FavoritesList struct {
 	gorm.Model
@@ -66,8 +70,9 @@ func (favs FavoritesList) FindFavsListsByUserID(userId uint) ([]FavoritesList, e
 func (favs FavoritesList) UpdateFavList(favsId uint) (FavoritesList, error) {
 	err := GetDB().Table("favorites_lists").Where("id=?", favsId).UpdateColumns(
 		map[string]interface{}{
-			"hide": favs.Hide,
-			"name": favs.Name,
+			"hide":       favs.Hide,
+			"name":       favs.Name,
+			"updated_at": time.Now(),
 		},
 	)
 	if err.Error != nil {
@@ -91,7 +96,6 @@ func (favs *FavoritesList) FindByID(id uint) (*FavoritesList, error) {
 			err = GetDB().Table("images").Where("id = ?", favs.Items[i].Post.PhotoID).Find(&favs.Items[i].Post.Image).Error
 			err = GetDB().Table("users").Where("id = ?", favs.Items[i].Post.UserID).Find(&favs.Items[i].Post.Sender).Error
 			err = GetDB().Table("images").Where("id = ?", favs.Items[i].Post.Sender.ImageID).Find(&favs.Items[i].Post.Sender.Image).Error
-
 		}
 	}
 	return favs, nil
