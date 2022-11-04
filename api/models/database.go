@@ -29,7 +29,7 @@ func init() {
 	}
 	db = conn
 	db.Debug().AutoMigrate(User{}, Post{},
-		Image{}, Tag{}, PostTag{}, Like{}, View{}, Favorite{}, FavoritesList{})
+		Image{}, Tag{}, PostTag{}, Like{}, View{}, Favorite{}, FavoritesList{}, Comment{})
 	fmt.Println("Veri Tabanı bağlantısı başarılı!")
 }
 func GetDB() *gorm.DB {
