@@ -132,6 +132,24 @@ func (u *User) FindByID(uid uint) (*User, error) {
 	return u, err
 }
 
+func (u *User) FindByUserName(username string) (*User, error) {
+	var err error
+	db = GetDB()
+	err = db.Debug().Table("users").Where("username=?", username).Take(&u).Error
+	if err != nil {
+		return &User{}, errors.New("Kullanıcı bulunamadı")
+	}
+	err = db.Debug().Table("posts").Where("user_id=?", u.ID).Find(&u.Posts).Error
+	if err != nil {
+		return &User{}, errors.New("Kullanıcıya ait gönderi verisi alınamadı")
+	}
+	err = db.Debug().Table("images").Where("id=?", u.ImageID).Find(&u.Image).Error
+	if err != nil {
+		return &User{}, errors.New("Kullanıcının profil fotoğrafı alınamadı")
+	}
+	return u, err
+}
+
 func (u *User) UpdateAUser(uid uint) (*User, error) {
 	err := u.BeforeSAve()
 	if err != nil {

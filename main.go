@@ -24,6 +24,7 @@ func main() {
 	router.HandleFunc("/api/users/confirm/{token}", middlewares.SetMiddlewareJSON(controllers.ConfirmAcoount)).Methods("POST")
 	router.HandleFunc("/api/users/getAll", middlewares.SetMiddlewareJSON(controllers.GetUsers)).Methods("GET")
 	router.HandleFunc("/api/users/getById/{id}", middlewares.SetMiddlewareJSON(controllers.GetUser)).Methods("GET")
+	router.HandleFunc("/api/users/getByUserName/{username}", middlewares.SetMiddlewareJSON(controllers.GetUserByUserName)).Methods("GET")
 	router.HandleFunc("/api/users/getByToken/", middlewares.SetMiddlewareJSON(controllers.GetUserByToken)).Methods("GET")
 	router.HandleFunc("/api/users/delete/{id}", middlewares.SetMiddlewareAuthentication(controllers.DeleteUser)).Methods("DELETE")
 	router.HandleFunc("/api/users/deleteByAdmin/{id}", middlewares.SetMiddlewareAuthentication(controllers.DeleteUserByAdmin)).Methods("DELETE")

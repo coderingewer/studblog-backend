@@ -185,6 +185,20 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	utils.JSON(w, http.StatusOK, usrR)
 }
 
+func GetUserByUserName(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	username := vars["username"]
+	user := models.User{}
+	userGotten, err := user.FindByUserName(username)
+	if err != nil {
+		utils.ERROR(w, http.StatusBadRequest, err)
+		return
+	}
+	usrRes := models.UserDetailResponse{}
+	usrR := usrRes.UserToUserDetailResponse(*userGotten)
+	utils.JSON(w, http.StatusOK, usrR)
+}
+
 func GetUserByToken(w http.ResponseWriter, r *http.Request) {
 	uid, err := auth.ExtractTokenID(r)
 	if err != nil {
