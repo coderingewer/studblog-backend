@@ -146,7 +146,15 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusInternalServerError, formattedError)
 		return
 	}
-	utils.JSON(w, http.StatusOK, users)
+	usersResp := []models.UserDetailResponse{}
+	userResp := models.UserDetailResponse{}
+	if len(users) > 0 {
+		for i, _ := range users {
+			respUsr := userResp.UserToUserDetailResponse(users[i])
+			usersResp = append(usersResp, respUsr)
+		}
+	}
+	utils.JSON(w, http.StatusOK, usersResp)
 }
 
 func ConfirmAcoount(w http.ResponseWriter, r *http.Request) {
